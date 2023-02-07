@@ -57,8 +57,31 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token }) {
       token.userRole = "admin"
+      console.log("********TEST*******")
+      const result = await fetch("http://127.0.0.1:9090/v1.0/subscribed/" + token.email) 
+      const test = await result.json()
+      console.log(test)
+      token.subStatus= undefined
+      if (Object.keys(test).length !== 0) {
+        if('status' in test){
+          token.subStatus= test.status
+        }
+        if('customer_id' in test){
+          token.customerId = test.customer_id
+        }
+      }
+      console.log(token)
       return token
     },
+    async session({ session, token, user }) {
+      // Send properties to the client, like an access_token and user id from a provider.
+      console.log("********SESSIONS*******")
+      session.subStatus = token.subStatus
+      //session.user.id = token.id
+      session.user.customerId = token.customerId
+      console.log(session)
+      return session
+    }
   },
 }
 
