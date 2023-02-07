@@ -1,6 +1,10 @@
 // This is an example of to protect an API route
 import { unstable_getServerSession } from "next-auth/next"
 import { authOptions } from "../auth/[...nextauth]"
+import { 
+  Button, 
+ } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import type { NextApiRequest, NextApiResponse } from "next"
 
@@ -10,10 +14,11 @@ export default async function handler(
 ) {
   const session = await unstable_getServerSession(req, res, authOptions)
 
+  //console.log(session)
   if (session) {
     return res.send({
       content:
-        "This is protected content. You can access this content because you are signed in.",
+        'This is protected content. You can access this content because you are signed in.'
     })
   }
 

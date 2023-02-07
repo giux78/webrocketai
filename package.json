@@ -18,11 +18,24 @@
     "Lluis Agusti <hi@llu.lu>"
   ],
   "dependencies": {
+    "@chakra-ui/icons": "^2.0.17",
+    "@chakra-ui/react": "^2.4.9",
+    "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.10.5",
+    "@thirdweb-dev/react": "^3.6.9",
+    "@thirdweb-dev/sdk": "^3.6.9",
+    "bootstrap": "^5.2.3",
+    "ethers": "^5.7.2",
+    "framer-motion": "^8.5.0",
     "next": "latest",
     "next-auth": "latest",
     "nodemailer": "^6",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-bootstrap": "^2.7.0",
+    "react-dom": "^18.2.0",
+    "react-icons": "^4.7.1",
+    "react-rnd": "^10.4.1",
+    "use-react-screenshot": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^17",
