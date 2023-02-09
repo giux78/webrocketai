@@ -12,7 +12,9 @@ import {
   Text,
   Image,
   Flex,
-  Button
+  Button,
+  Tooltip,
+  useToast
 } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
 
@@ -134,8 +136,9 @@ const Train: NextPage = () => {
   const controls = useAnimation();
   const startAnimation = () => controls.start("hover");
   const stopAnimation = () => controls.stop();
+  const toast = useToast();
 
-  const [selectedFiles, setSelectedFiles] = useState(undefined);
+  const [imagesSelected, setImagesSelected] = useState(undefined);
   const [imagePreviews, setImagePreviews] = useState([]);
 
   const selectFiles = (event) => {
@@ -145,21 +148,28 @@ const Train: NextPage = () => {
     }
 
     if (images.length < 5 || images.length > 10) {
-      // to imlement correct validation, just using alert for now
-      alert("Please add at least 5 files and no more than 10")
-      document.querySelector("#file-input").value = "";
+       toast({
+          title: 'Not enough or too many',
+          description: "Please add between 5 and 10 images to begin training.",
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        })
+      setImagesSelected(undefined)
       setImagePreviews([])
       return
     }
-    setSelectedFiles(event.target.files);
+
+    setImagesSelected(event.target.files);
     setImagePreviews(images);
 
 
   };
   
   const uploadImages = () => {
-    const files = Array.from(selectedFiles ?? {});
+    const files = Array.from(imagesSelected ?? {});
     console.log(files);
+  
   };
   
 
@@ -239,12 +249,15 @@ const Train: NextPage = () => {
               onDragLeave={stopAnimation}
               onChange={selectFiles}
               id="file-input"
+              value={selectFiles}
             />
           </Box>
             </Box>
            </AspectRatio>
             <Box>
-              <Button colorScheme='green' onClick={uploadImages}>Start training</Button>
+              <Tooltip label={!imagesSelected ? "Please first add some images" : "Let's rocket!"}>
+                <Button colorScheme='green' onClick={uploadImages}>Start training</Button>
+              </Tooltip>
             </Box>
         </Flex>
         {imagePreviews && (
