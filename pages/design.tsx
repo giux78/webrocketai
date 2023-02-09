@@ -92,7 +92,7 @@ const Generate: NextPage = () => {
 
   const SERVER_URL =  'http://localhost:9090/v1.0' // 'http://3.226.222.121:9090/v1.0'
 
-  const checkout = async (event, toscreenshot) => {
+  const design = async (event, toscreenshot) => {
     event.preventDefault();
     setBlockUI(true)
     const screenshot = await takeScreenshot(toscreenshot.current)
@@ -109,7 +109,7 @@ const Generate: NextPage = () => {
       "filename" : selectedFile.name,
       "model" : model
     })
-    const res = await fetch(SERVER_URL + "/checkout/stripe", {
+    const res = await fetch(SERVER_URL + "/design/product", {
         body,
         headers: new Headers({
           'accept': '*/*',
@@ -266,7 +266,7 @@ const Generate: NextPage = () => {
             </Select>  
           </Stack>
                 <div>
-                  <Button style={{width: "100%"}}  size="lg" variant="outline-success" onClick={event => checkout(event, frame)} id="checkout-button">
+                  <Button style={{width: "100%"}}  size="lg" variant="outline-success" onClick={event => design(event, frame)} id="checkout-button">
                     Create product
                   </Button>
                   <br />
