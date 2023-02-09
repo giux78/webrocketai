@@ -139,7 +139,7 @@ const Train: NextPage = () => {
   const toast = useToast();
 
   const [imagesSelected, setImagesSelected] = useState(undefined);
-  const [imagePreviews, setImagePreviews] = useState([]);
+  const [imagesPreview, setImagesPreview] = useState([]);
 
   const selectFiles = (event) => {
     let images = [];
@@ -156,12 +156,12 @@ const Train: NextPage = () => {
           isClosable: true,
         })
       setImagesSelected(undefined)
-      setImagePreviews([])
+      setImagesPreview([])
       return
     }
 
     setImagesSelected(event.target.files);
-    setImagePreviews(images);
+    setImagesPreview(images);
 
 
   };
@@ -260,11 +260,11 @@ const Train: NextPage = () => {
               </Tooltip>
             </Box>
         </Flex>
-        {imagePreviews && (
+        {imagesPreview && (
         <Flex justifyContent="center"> 
           <Box w={900} display="flex" flexWrap="wrap">
-              {imagePreviews.map((img, i) => {
-                return <Image src={img} alt={'image-' + i} key={i} width={300} />;
+              {imagesPreview.map((img, i) => {
+                return <Image boxSize='300px' objectFit='cover' src={img} alt={'image-' + i} key={i}/>;
           })}
           </Box>
         </Flex>
