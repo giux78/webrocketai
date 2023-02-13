@@ -1,5 +1,5 @@
-import { ChangeEvent, useRef, useState } from 'react';
 import type { NextPage } from 'next';
+import { ChangeEvent, useRef, useState } from 'react';
 import Layout2 from '../components/layout2';
 import {
   AspectRatio,
@@ -17,6 +17,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { motion, useAnimation } from 'framer-motion';
+
 
 const Train: NextPage = () => {
   // const [file, setFile] = useState<File>();
@@ -139,9 +140,24 @@ const Train: NextPage = () => {
   const [imagesSelected, setImagesSelected] = useState(undefined);
   const [imagesPreview, setImagesPreview] = useState([]);
 
+  const [identifier, setIdentifier] = useState('')
+  const handleChange = (event) => setIdentifier(event.target.value)
+
+  const [description, setDescription] = useState('')
+  const handleChangeDesc = (event) => setDescription(event.target.value)
+
   const selectFiles = event => {
     let images = [];
+    let images64 = []
     for (let i = 0; i < event.target.files.length; i++) {
+      console.log(i)
+      const reader = new window.FileReader();
+      reader.onload = function() {
+        const dataURL = reader.result;
+        const base64 = dataURL.split(',')[1];
+        images64.push(base64)
+      };
+      const bs64 = reader.readAsDataURL(event.target.files[i]);
       images.push(URL.createObjectURL(event.target.files[i]));
     }
 
@@ -150,7 +166,7 @@ const Train: NextPage = () => {
         title: 'Not enough or too many',
         description: 'Please add between 5 and 10 images to begin training.',
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
       setImagesSelected(undefined);
@@ -158,18 +174,52 @@ const Train: NextPage = () => {
       return;
     }
 
-    setImagesSelected(event.target.files);
+    setImagesSelected(images64);
     setImagesPreview(images);
   };
 
-  const uploadImages = () => {
+  const SERVER_URL =  'http://localhost:9090/v1.0'
+
+  const uploadImages = async event => {
+    event.preventDefault();
     const files = Array.from(imagesSelected ?? {});
-    console.log(files);
+    const body = JSON.stringify({
+      files
+    })
+    //const body = files
+
+    console.log(body)
+    const res = await fetch(SERVER_URL + "/train/" + description + "/" + identifier, {
+        body,
+        headers: new Headers({
+          'accept': '*/*',
+          'content-type': 'application/json'
+        }),
+        //mode: 'no-cors',
+        method: "POST"
+    })
+  
+      const result = await res.json()
   };
 
   return (
     <Layout2>
       <Box my="12">
+      <Text>Identifier: {identifier}</Text>
+      <Input
+        value={identifier}
+        onChange={handleChange}
+        placeholder='Unique identifier for concept'
+        size='lg'
+      />
+      <br/><br></br>
+      <Text>Class description: {description}</Text>
+      <Input
+        value={description}
+        onChange={handleChangeDesc}
+        placeholder='Class description'
+        size='lg'
+      />
         <Flex justifyContent="center" my="12" align="center" gap="32">
           <AspectRatio width="64" ratio={1}>
             <Box
