@@ -49,10 +49,24 @@ const Generate: NextPage = () => {
   const [frameVis, setFrameVis] = useState("d-none");
   const [gridVis, setGridVis] = useState("d-none");
   const [blockUI, setBlockUI] = useState(false)
-  const [model, setModel] = useState("dalle-flow")
+  const [models, setModels] =  useState([])
+  const [model, setModel] =  useState({})
   //const getImageTest = () => takeScreenshot(parent.current)
 
   const SERVER_URL =  'http://localhost:9090/v1.0' // 'http://3.226.222.121:9090/v1.0'
+
+  useEffect(() => {
+    fetch(SERVER_URL +'/models/rocketai',{
+    headers: new Headers({
+      'accept': '*/*',
+      'content-type': 'application/json'
+    })
+  }).then((res) => res.json())
+    .then((data) => {
+        setModels(data)
+        setGenerate(data[0].info.prompt)
+    })
+  }, [])
 
   const generate_dalle_image = async event => {
     event.preventDefault();
@@ -63,7 +77,7 @@ const Generate: NextPage = () => {
     const name = generate
     const body = JSON.stringify({
       "text_to_image": name,
-      "model" : model
+      "model" : model.name
     })
 
     const fileName = name.trim().replaceAll(" ", "_")
@@ -86,27 +100,6 @@ const Generate: NextPage = () => {
       window.location.href = "#chooseOne";
   }
 
-  const mock_generate_dalle_image = async event => {
-    event.preventDefault();
-    const name = generate
-    const body = JSON.stringify({
-      "text_to_image": name
-    })
-
-    const fileName = name.trim().replaceAll(" ", "_")
-    const res = await fetch(SERVER_URL + "/mock/generate_images/" + fileName, {
-        body,
-        headers: new Headers({
-          'accept': '*/*',
-          'content-type': 'application/json'
-        }),
-        //mode: 'no-cors',
-        method: "POST"
-    })
-  
-      const result = await res.json()
-      setImages(result)
-  }
 
   const choose_dalle_image_and_upscale = async (event, key, name) => {
     event.preventDefault();
@@ -149,7 +142,7 @@ const Generate: NextPage = () => {
       "name" : generate,
       "description" : generate,
       "filename" : selectedFile.name,
-      "model" : model
+      "model" : model.name
     })
     const res = await fetch(SERVER_URL + "/checkout/stripe", {
         body,
@@ -315,6 +308,7 @@ const Generate: NextPage = () => {
               value={generate} 
               onChange={(e) => setGenerate(e.target.value)}
             />
+            { /** 
               <DropdownButton
                 variant="outline-info"
                 title="Random sample"
@@ -340,6 +334,8 @@ const Generate: NextPage = () => {
                   Surrealism big waves at nazaree, portugal on moonlight
                 </Dropdown.Item>
               </DropdownButton>
+              */
+            }
             <Button onClick={generate_dalle_image} variant="outline-primary">Generate</Button>
             </InputGroup>
             </Form.Group>
@@ -347,12 +343,12 @@ const Generate: NextPage = () => {
             <Form.Select size="lg"
               onChange={e => {
                       console.log("e.target.value", e.target.value);
-                      setModel(e.target.value)}}
+                      setModel(models[e.target.value])
+                      setGenerate(models[e.target.value].info.prompt)
+                    }  
+                  }
             >
-              <option value="dalle-flow">Dall-e flow craiyon(ex Dall-e mega) & Glid3 xl</option>
-              <option value="stable">Stable Diffusion</option>
-              <option disabled={true}> craiyon (ex dall-e mega) coming soon</option>
-              <option disabled={true}>Disco Diffusion coming soon</option>
+              { models.map( (item, i ) => <option value={i}>{item.name}</option>) }
             </Form.Select>
           </Form>
           </div>
@@ -375,7 +371,7 @@ const Generate: NextPage = () => {
         <br/><br/><br/>
         <Container className={frameVis} id="mintPrint">
           <Row>
-            3. Mint and Print
+            3. Details
           </Row>
           <Row>
             <Col xs={12} md={8}>
@@ -385,6 +381,9 @@ const Generate: NextPage = () => {
                   src={imageArt} alt=""/>
                 </div>
               </Col>
+  
+            
+          { /** 
             <Col xs={6} md={4}>
               <Container>
               <Row>
@@ -416,26 +415,32 @@ const Generate: NextPage = () => {
                 </Row>
                 <br />
               <Row>
-              { /* address && 
+              { address && 
                 <div>
                   <Button style={{width: "100%"}}  size="lg" variant="outline-primary"  onClick={event => mint_and_transfer(event)} id="checkout-button">
                    Mint and buy the physical copy
                   </Button>
                 </div>
-            */ }
-            </Row>
-            </Container>
-            </Col>
+              }
+              </Row>
+              </Container>
+              </Col>
+            */
+            }
           </Row>
         </Container>
     </div>
     <br/>
     <br/>
     <br/>
+  { 
+  /** 
     <div>
       <button onClick={start_ec2}> Start ec2 </button>
       <button onClick={stop_ec2}> Stop ec2 </button>
     </div>
+    */
+  }
     
     </div>
   </Layout2>

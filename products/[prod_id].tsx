@@ -133,7 +133,7 @@ export async function getStaticPaths() {
   }
   return {
     // Only `/posts/1` and `/posts/2` are generated at build time
-    paths: products_url.slice(0,8),
+    paths: products_url.slice(0,1),
     // Enable statically generating additional pages
     // For example: `/posts/3`
     fallback: true,

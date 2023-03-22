@@ -9,7 +9,6 @@ import {
   VStack,
   Icon,
   useColorModeValue,
-  Link,
   Drawer,
   DrawerContent,
   Text,
@@ -29,7 +28,10 @@ import {
   InputRightElement,
   Center,
   Spacer,
+  useMediaQuery,
+  Link,
 } from '@chakra-ui/react';
+
 import {
   FiHome,
   FiTrendingUp,
@@ -49,9 +51,12 @@ import { IconType } from 'react-icons';
 import { ReactText } from 'react';
 import { signIn, signOut, SessionProvider, useSession} from "next-auth/react"
 
+import NextLink from 'next/link';
+import Link2 from 'next/link'
 import { useContext } from 'react'
 import { SubsctiptionContext } from "../components/context";
-import NextLink from 'next/link'
+import { useState } from 'react';
+
 
 interface LinkItemProps {
   name: string;
@@ -59,15 +64,15 @@ interface LinkItemProps {
   icon: IconType;
 }
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome, href: '/' },
+ // { name: 'Home', icon: FiHome, href: '/' },
   { name: 'Models', icon: FiGlobe, href: '/models'},
   { name: 'Train', icon: FiFigma, href: '/train'},
   { name: 'Generate', icon: FiEdit2, href: '/generate'},
   { name: 'Generate Pro', icon: FiEdit3, href: 'http://ec2-54-163-242-71.compute-1.amazonaws.com:9090/'},
-  { name: 'Chatbot', icon: FiEdit3, href: '/chatbot'},
-  { name: 'Trending', icon: FiTrendingUp, href: '/feed' },
-  { name: 'Explore', icon: FiCompass, href: '/shop' },
-  { name: 'Settings', icon: FiSettings, href: '/settings' },
+//  { name: 'Chatbot', icon: FiEdit3, href: '/chatbot'},
+//  { name: 'Trending', icon: FiTrendingUp, href: '/feed' },
+//  { name: 'Explore', icon: FiCompass, href: '/shop' },
+//  { name: 'Settings', icon: FiSettings, href: '/settings' },
 ];
 
 export default function Layout2({
@@ -175,11 +180,11 @@ interface MobileProps extends FlexProps {
 }
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
-  const { data: session, status } = useSession()    
+  const { data: session, status } = useSession()
+  const [query, setQuery] = useState("");   
   const {subscribed, setSubscribed} = useContext(SubsctiptionContext);
   const SERVER_URL =  'http://localhost:9090/v1.0'
-  console.log(session)
-  console.log(status)
+
 
   const subscribe = async (event) => {
     event.preventDefault();
@@ -194,7 +199,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     })
 
       const result = await res.json() //.json()
-      console.log(result)
       //window.location.href = test.link_stripe
       window.open(result.link_stripe, '_blank', 'noopener,noreferrer');
   }  
@@ -217,7 +221,6 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
     })
 
       const result = await res.json() //.json()
-      console.log(result)
       //window.location.href = test.link_stripe
       window.open(result.link_stripe, '_blank', 'noopener,noreferrer');
   }
@@ -243,9 +246,21 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
 
 
       <HStack w='800px'>
+      
       <InputGroup>
-            <Input placeholder='Search' />
-            <InputRightElement children={<SearchIcon color='green.500' />} />
+            <Input placeholder='Search' 
+                    value={query} 
+                    onChange={(e) => setQuery(e.target.value)}
+            />
+            <InputRightElement >
+            <Link2 href={{ pathname: '/search', query: { keyword: query } }}>
+            <IconButton
+              colorScheme='blue'
+              aria-label='Search '
+              icon={<SearchIcon />}
+            />
+            </Link2>
+            </InputRightElement>
        </InputGroup>
       </HStack>
       <Spacer />
@@ -295,8 +310,12 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
             <MenuList
               bg={useColorModeValue('white', 'gray.900')}
               borderColor={useColorModeValue('gray.200', 'gray.700')}>
-              <MenuItem>Profile</MenuItem>
-              <MenuItem>Settings</MenuItem>
+              {
+              /*
+                <MenuItem>Profile</MenuItem>
+                <MenuItem>Settings</MenuItem>
+              */  
+              }
               <MenuItem 
                 onClick={event => billing(event)} id="checkout-button">
                   Billing
